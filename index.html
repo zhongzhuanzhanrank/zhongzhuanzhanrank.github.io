@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AI 中转站排行榜，按在线率、响应延迟、模型覆盖和用户评分快速对比 API 服务。"
+    />
+    <meta name="theme-color" content="#101426" />
+    <title>中转站排行榜 · AI API Rank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Noto+Sans+SC:wght@400;500;600;700;800;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#ranking">跳到排行榜</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" aria-label="返回首页顶部">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span><strong>中转站排行</strong><small>AI RELAY INDEX</small></span>
+        </a>
+        <a class="header-link" href="#about">数据说明</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero shell" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span>2026 实时数据快照</p>
+          <h1 id="page-title">找到更稳的<br /><em>AI 中转站</em></h1>
+          <p class="hero-lead">
+            用同一张榜单比较在线率、延迟、模型覆盖与用户评分。
+            不替你做决定，只把重要信息放在一起。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#ranking">查看完整榜单 <span>↓</span></a>
+            <p>数据更新于 <strong id="updated-at">读取中</strong></p>
+          </div>
+        </div>
+
+        <aside class="snapshot" aria-label="排行榜数据概览">
+          <div class="snapshot-top">
+            <span>DATA SNAPSHOT</span>
+            <span class="live"><i></i> LIVE</span>
+          </div>
+          <dl class="stats-grid">
+            <div><dt>收录站点</dt><dd id="site-count">—</dd></div>
+            <div><dt>平均在线率</dt><dd id="average-uptime">—</dd></div>
+            <div><dt>平均延迟</dt><dd id="average-latency">—</dd></div>
+            <div><dt>模型厂商</dt><dd id="vendor-count">—</dd></div>
+          </dl>
+          <p class="snapshot-note">指标会随监测时段、地区和上游线路变化</p>
+        </aside>
+      </section>
+
+      <section class="signal-bar" aria-label="选站建议">
+        <div class="shell signal-grid">
+          <p><span>01</span>长期在线率优先</p>
+          <p><span>02</span>关注延迟波动</p>
+          <p><span>03</span>先小额测试</p>
+          <p><span>04</span>不囤大额余额</p>
+        </div>
+      </section>
+
+      <section class="ranking shell" id="ranking" aria-labelledby="ranking-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">01 / RANKING</p>
+            <h2 id="ranking-title">AI 中转站排行榜</h2>
+          </div>
+          <p id="result-summary" aria-live="polite">正在读取数据…</p>
+        </div>
+
+        <div class="controls" aria-label="排行榜筛选工具">
+          <label class="search-control">
+            <span>搜索站点或模型</span>
+            <span class="input-row">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
+              <input id="search-input" type="search" placeholder="例如 Anthropic、DuiAPI" autocomplete="off" />
+            </span>
+          </label>
+          <label>
+            <span>模型厂商</span>
+            <select id="vendor-filter"><option value="all">全部厂商</option></select>
+          </label>
+          <label>
+            <span>排序方式</span>
+            <select id="sort-select">
+              <option value="rank">综合排名</option>
+              <option value="uptime">在线率最高</option>
+              <option value="latency">延迟最低</option>
+              <option value="models">模型最多</option>
+              <option value="rating">评分最高</option>
+            </select>
+          </label>
+          <button id="reset-button" type="button">重置筛选</button>
+        </div>
+
+        <div class="table-card">
+          <div id="loading-state" class="table-state">
+            <span class="loader" aria-hidden="true"></span>
+            <strong>正在载入排行榜</strong>
+          </div>
+          <div id="error-state" class="table-state" hidden>
+            <strong>数据暂时无法读取</strong>
+            <p>请通过本地 HTTP 服务或 GitHub Pages 打开此页面。</p>
+            <button id="retry-button" type="button">重新加载</button>
+          </div>
+          <div id="empty-state" class="table-state" hidden>
+            <strong>没有匹配的站点</strong>
+            <p>试试更短的关键词或重置筛选。</p>
+          </div>
+          <div id="table-container" class="table-scroll" hidden>
+            <table>
+              <thead>
+                <tr>
+                  <th class="rank-column" scope="col">排名</th>
+                  <th class="site-column" scope="col">站点</th>
+                  <th scope="col">运行质量</th>
+                  <th scope="col">模型覆盖</th>
+                  <th scope="col">用户评分</th>
+                  <th scope="col">支付方式</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-footer">
+          <p>在线率和延迟仅代表数据快照，不构成购买或充值建议。</p>
+          <button id="load-more-button" type="button" hidden>加载更多</button>
+        </div>
+      </section>
+
+      <section class="about" id="about" aria-labelledby="about-title">
+        <div class="shell about-grid">
+          <div>
+            <p class="section-index">02 / ABOUT DATA</p>
+            <h2 id="about-title">先比较，再决定</h2>
+          </div>
+          <div class="about-copy">
+            <p>
+              页面数据来自公开快照，综合展示站点排名、平均在线率、响应延迟、模型数量、用户评分和支付方式。
+              价格、退款、发票与上游线路可能随时变化，请在实际购买前重新确认。
+            </p>
+            <p>
+              建议先用最低金额测试目标模型、流式输出、工具调用和逐请求账单。正式业务或敏感数据应优先考虑官方 API。
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <div class="brand brand-footer">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span><strong>中转站排行</strong><small>AI RELAY INDEX</small></span>
+        </div>
+        <p>静态 GitHub Pages 原型 · 数据仅供参考</p>
+      </div>
+    </footer>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "zhongzhuanzhanrank-github-io",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/generate-static-page.mjs",
+    "sync": "node scripts/generate-static-page.mjs --sync",
+    "check": "node --check app.js && node --check scripts/generate-static-page.mjs && node scripts/generate-static-page.mjs --check"
+  }
+}

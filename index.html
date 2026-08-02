@@ -623,50 +623,114 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "AI 中转站排行榜的数据来自哪里？",
+          "name": "什么是 AI API 中转站？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "榜单依据公开站点资料和监测快照整理，展示站点介绍、成立日期、在线率、延迟、模型覆盖、支付方式以及退款和发票政策。指标会随线路和服务状态变化，请以实际测试为准。"
+            "text": "中转站位于你的应用与模型厂商之间：你把请求发送给中转站，中转站完成鉴权、路由和计费，再将请求转发到模型厂商或其上游渠道。它通常能降低支付和接入门槛，并用一个 Key 提供多个模型，但也增加了第三方可用性、隐私和经营连续性风险。"
           }
         },
         {
           "@type": "Question",
-          "name": "为什么这里的排名与其他榜单不同？",
+          "name": "中转 API、官方 API 和 ChatGPT、Claude 订阅有什么区别？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "本站在公开排名区间基础上采用独立、固定的排序规则，因此不会与其他站点保持完全相同的顺序，也不会在每次刷新时随机变化。排名用于辅助浏览，不代表购买或充值建议。"
+            "text": "官方 API 按实际 Token 或请求量计费，适合程序调用；ChatGPT Plus、Claude Pro 等订阅主要面向网页或官方客户端，不等于可以无限调用 API；中转 API 则由第三方提供兼容接口和人民币结算。不要把订阅额度、API 额度和中转余额混为一谈。"
           }
         },
         {
           "@type": "Question",
-          "name": "排名靠前就一定更适合吗？",
+          "name": "什么情况下更适合直接使用官方 API？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "不一定。综合排名只能帮助缩小范围。编程、长文档、图片和高并发任务关注的指标不同，正式接入前应使用自己的网络、模型和真实任务做小额测试。"
+            "text": "涉及客户隐私、商业机密、受监管数据、长期生产服务或需要官方 SLA 时，应优先选择官方 API 或具备正式合同、数据处理协议和审计能力的企业服务。中转更适合个人学习、原型验证、非敏感自动化和能够随时切换供应商的任务。"
           }
         },
         {
           "@type": "Question",
-          "name": "为什么建议先小额充值？",
+          "name": "中转站的实际价格怎样计算？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "中转服务会受到上游线路、模型政策、价格调整和运营状态影响。按近期用量充值并保留备用接口，可以降低余额和业务连续性风险。"
+            "text": "先确认充值换算，再看模型倍率、用户分组倍率、渠道倍率以及输入、输出、缓存读写的单独价格。简化公式是：实际人民币成本约等于官方美元单价乘 Token 用量，再乘各项倍率并除以充值兑换比例。只比较首页写的“几折”通常不够，应该用一条真实账单复算。"
           }
         },
         {
           "@type": "Question",
-          "name": "如何看待在线率和平均延迟？",
+          "name": "为什么缓存命中率会显著影响成本？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "在线率适合观察长期可用性，平均延迟适合做初步筛选，但不同地区、运营商和请求类型的体验可能差异很大，不能替代本地连续测试。"
+            "text": "Claude Code、Codex 和长对话会反复携带大量上下文。缓存命中时，重复上下文通常比重新输入便宜；切换上游账号、模型或路由可能让缓存失效。测试中应分别查看缓存写入、缓存读取和普通输入用量，不能只看总 Token。"
           }
         },
         {
           "@type": "Question",
-          "name": "缺失的数据会按零计算吗？",
+          "name": "怎样判断模型是否真实、能力是否完整？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "不会。没有公开记录的字段会标记为暂无或待确认，不会把缺失值当成零，也不会用榜单更新时间代替站点成立日期。"
+            "text": "不要只看模型名称。应测试模型版本标识、上下文长度、流式输出、工具调用、结构化输出、图片或文件输入，并用固定题目比较输出特征。若高价模型长期表现异常、关键能力缺失或账单模型名与请求不一致，应暂停充值并向客服核对。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "在线率高、平均延迟低就代表稳定吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "不一定。平均值可能掩盖晚高峰抖动、长请求中断和少量极慢请求。更有价值的指标包括成功率、P95 延迟、首字时间、完整响应时间、连续请求失败率和错误码分布。至少在白天与晚高峰各做一轮真实任务测试。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "使用中转站时如何保护隐私？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "默认假设中转服务理论上能够接触请求内容。不要发送密码、私钥、身份证件、未脱敏客户数据或完整生产数据库；敏感字段应在本地脱敏。企业使用前还应确认日志保留期限、数据存储地区、删除机制、上游渠道和是否提供数据处理协议。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "API Key 怎样管理才更安全？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "为不同项目创建独立 Key，设置额度、模型和 IP 限制，不要把 Key 写进前端代码、公开仓库、截图或聊天记录。服务端使用环境变量或密钥管理系统保存，并定期轮换。发现异常调用后应立即禁用旧 Key，而不是只修改应用配置。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "第一次应该充值多少？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "只充值完成验收测试和短期使用所需的金额。先确认到账换算、账单明细、退款条件和余额有效期，再逐步增加。大额赠送、超低包月和限时囤积可能把线路、调价或停运风险转移给用户，不应因为折扣一次性存入长期预算。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "退款、发票和客服应该怎么核实？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "查看公开规则是否写明可退款范围、手续费、处理时限、发票主体和开票内容，并在充值前保存规则页面。客服响应速度要用真实问题验证，尤其要观察故障时是否主动公告、是否解释错误原因，以及余额异常能否提供可核对的处理记录。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "为什么不建议盲目使用超长上下文？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "上下文越长，输入成本、等待时间和缓存失效代价越高，也不保证模型能同等关注全部内容。应先通过检索、摘要、分段和删除无关历史减少输入；只有任务确实需要并且完成成本测试后，再启用 200K 或更长上下文。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "中转站突然不可用时怎么办？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "提前保存 Base URL、模型映射和余额记录，并让应用支持通过配置切换供应商。关键业务至少准备一个备用 Key，设置请求超时、有限重试和熔断，避免无限重试造成重复扣费。故障发生后先停用自动任务，再根据错误码判断是余额、限流、模型下线还是整站故障。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "AI 中转站排行榜的数据和排名如何理解？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "榜单依据公开资料和监测快照整理，并采用本站独立、固定的区间排序规则。缺失字段不会按零计算，排名也不能替代你的本地测试。它适合用于建立候选名单，不构成稳定性承诺、资金安全保证或购买建议。"
           }
         }
       ]
@@ -1255,7 +1319,7 @@
             <div class="station-meta"><div><h3>模型厂商</h3><div class="tag-list"><span class="tag">Anthropic</span><span class="tag">Google</span><span class="tag">OpenAI</span><span class="tag">阿里云</span><span class="tag">ByteDance</span><span class="tag tag--more">+5</span></div></div><div><h3>支付方式</h3><div class="tag-list"><span class="tag">USDT</span><span class="tag">微信</span><span class="tag">支付宝</span><span class="tag">对公转账</span></div></div></div>
             <div class="station-card__foot"><p><span>退款：支持</span><span>发票：支持</span></p><a class="detail-link" href="https://www.hvoy.ai/sites/voltapiai/" target="_blank" rel="nofollow noopener" referrerpolicy="origin" aria-label="查看 Volt 的来源详情">查看来源详情 <span aria-hidden="true">↗</span></a></div>
           </article></div><nav class="pagination" aria-label="排行榜分页"><span class="page-step is-disabled">← 上一页</span><div class="page-numbers"><span class="page-number is-current" aria-current="page">1</span><a class="page-number" href="/page/2/" aria-label="前往第 2 页">2</a><a class="page-number" href="/page/3/" aria-label="前往第 3 页">3</a><span class="page-gap" aria-hidden="true">…</span><a class="page-number" href="/page/14/" aria-label="前往第 14 页">14</a></div><a class="page-step" href="/page/2/">下一页 →</a></nav></section>
-<section class="method" id="method"><div class="shell"><div class="section-heading"><p>02 / METHODOLOGY</p><h2>选择中转站时，先验证四件事</h2></div><div class="method-grid"><article><b>01</b><h3>连续可用性</h3><p>在不同时间段连续请求，记录成功率、首字等待和完整响应时间，不要只依赖一次测速。</p></article><article><b>02</b><h3>模型真实性</h3><p>核对版本、上下文、流式输出和工具调用。名称相同，不代表上游能力和限制完全相同。</p></article><article><b>03</b><h3>账单可复算</h3><p>检查输入、输出、缓存和倍率是否分别记录，确认单次调用成本能与用量明细对应。</p></article><article><b>04</b><h3>运营与售后</h3><p>关注公告、客服、退款和开票规则。先小额充值，为关键调用保留备用服务。</p></article></div><p class="data-note">榜单快照更新于 2026-08-02，缺失字段不会按零值计算。</p></div></section><section class="faq shell" id="faq"><div class="section-heading"><p>03 / FAQ</p><h2>常见问题</h2></div><div class="faq-list"><details><summary>AI 中转站排行榜的数据来自哪里？</summary><p>榜单依据公开站点资料和监测快照整理，展示站点介绍、成立日期、在线率、延迟、模型覆盖、支付方式以及退款和发票政策。指标会随线路和服务状态变化，请以实际测试为准。</p></details><details><summary>为什么这里的排名与其他榜单不同？</summary><p>本站在公开排名区间基础上采用独立、固定的排序规则，因此不会与其他站点保持完全相同的顺序，也不会在每次刷新时随机变化。排名用于辅助浏览，不代表购买或充值建议。</p></details><details><summary>排名靠前就一定更适合吗？</summary><p>不一定。综合排名只能帮助缩小范围。编程、长文档、图片和高并发任务关注的指标不同，正式接入前应使用自己的网络、模型和真实任务做小额测试。</p></details><details><summary>为什么建议先小额充值？</summary><p>中转服务会受到上游线路、模型政策、价格调整和运营状态影响。按近期用量充值并保留备用接口，可以降低余额和业务连续性风险。</p></details><details><summary>如何看待在线率和平均延迟？</summary><p>在线率适合观察长期可用性，平均延迟适合做初步筛选，但不同地区、运营商和请求类型的体验可能差异很大，不能替代本地连续测试。</p></details><details><summary>缺失的数据会按零计算吗？</summary><p>不会。没有公开记录的字段会标记为暂无或待确认，不会把缺失值当成零，也不会用榜单更新时间代替站点成立日期。</p></details></div></section>
+<section class="method" id="method"><div class="shell"><div class="section-heading"><p>02 / SELECTION GUIDE</p><h2>如何选择 AI API 中转站</h2></div><div class="guide-intro"><p>不要从“哪家最便宜”开始，而要先确定任务、风险和退出方案。一个适合个人试用的中转站，不一定适合团队生产环境；一个短对话很快的接口，也不一定能稳定完成长代码任务。建议按下面的顺序筛选：明确需求、排除高风险候选、复算成本、完成真实验收，最后才决定充值额度。</p><strong>核心原则：能切换、能限额、能复算、能追责。</strong></div><div class="method-grid"><article><b>01 / 场景</b><h3>先确定是否应该用中转</h3><p>个人学习、原型和非敏感任务可以考虑中转。涉及客户数据、商业机密、医疗金融信息、正式 SLA 或长期生产服务时，应优先考虑官方 API 或能够签合同、提供审计与数据处理协议的企业服务。</p></article><article><b>02 / 模型</b><h3>核对目标模型与完整能力</h3><p>确认具体版本，而不是只看“支持 GPT、Claude”。逐项测试上下文长度、流式输出、工具调用、结构化 JSON、图片和文件输入。编程场景还要验证 Claude Code、Codex、Cursor 等工具所需的协议和缓存行为。</p></article><article><b>03 / 稳定</b><h3>看分布，不只看平均值</h3><p>至少记录成功率、首字时间、完整响应时间、P95 延迟和错误码。分别在白天、晚高峰进行连续短请求和长请求；如果短请求正常但长任务频繁中断，依然不适合编程代理或批处理。</p></article><article><b>04 / 计费</b><h3>用真实账单复算成本</h3><p>确认充值兑换比例、模型倍率、用户分组、输入输出单价以及缓存读写价格。完成一条可控请求后，将 Token 用量与官方价格逐项计算，核对最终扣费；首页折扣、余额美元符号和“1 元等于多少额度”都不能单独代表真实成本。</p></article><article><b>05 / 缓存</b><h3>测试长对话的缓存命中</h3><p>Claude Code、Codex 和长会话会反复发送上下文。检查账单是否区分普通输入、缓存写入和缓存读取，并连续运行相同项目观察命中率。上游切号或路由漂移可能使缓存失效，导致费用和等待时间突然上升。</p></article><article><b>06 / 隐私</b><h3>默认第三方可能接触内容</h3><p>不要发送密码、私钥、身份证件或未脱敏的生产数据。核实日志保存期限、存储地区、上游渠道和删除方式。为每个项目单独创建 Key，并配置额度、模型、IP 或并发限制，避免一个密钥泄露影响全部余额。</p></article><article><b>07 / 运营</b><h3>检查主体、规则和故障沟通</h3><p>查看运营时间、公告历史、客服入口、退款规则、发票主体和状态页。真正有价值的不是“永不跑路”的承诺，而是故障时能否及时公告、解释原因、给出恢复进度，并对异常扣费留下可核对的处理记录。</p></article><article><b>08 / 退出</b><h3>在充值前准备备用方案</h3><p>应用应把 Base URL、Key 和模型名放在配置中，避免写死。关键任务准备第二供应商，设置合理超时、有限重试和熔断。充值只覆盖近期用量，定期导出账单与余额截图，确保站点不可用时可以快速迁移。</p></article></div><div class="cost-guide"><div><p>COST CHECK / 费用复算</p><h3>不要只比较“倍率”</h3></div><div class="cost-formula"><code>实际成本 ≈ 官方单价 × Token 用量 × 模型倍率 × 分组倍率 ÷ 充值兑换比例</code><p>还要分别计算输入、输出、缓存写入、缓存读取，以及失败请求是否扣费。不同站点对“额度”“美元”和“倍率”的定义可能不同，最可靠的方法始终是复算一条真实账单。</p></div></div><div class="decision-table" role="table" aria-label="官方 API 与中转 API 选择对比"><div class="decision-row decision-row--head" role="row"><strong role="columnheader">判断维度</strong><strong role="columnheader">优先官方 API</strong><strong role="columnheader">可考虑中转 API</strong></div><div class="decision-row" role="row"><b role="rowheader">数据敏感度</b><span role="cell">客户数据、商业机密、合规数据</span><span role="cell">公开内容、学习与已脱敏数据</span></div><div class="decision-row" role="row"><b role="rowheader">服务要求</b><span role="cell">需要 SLA、合同、审计与长期稳定</span><span role="cell">允许短暂停机并能快速切换</span></div><div class="decision-row" role="row"><b role="rowheader">支付与接入</b><span role="cell">具备海外支付和官方账号条件</span><span role="cell">需要人民币支付、统一 Key 和兼容接口</span></div><div class="decision-row" role="row"><b role="rowheader">模型范围</b><span role="cell">长期使用单一厂商核心模型</span><span role="cell">需要低成本比较多个厂商和版本</span></div><div class="decision-row" role="row"><b role="rowheader">故障承受</b><span role="cell">无法接受第三方停运或上游切换</span><span role="cell">已有备用供应商、限额和迁移能力</span></div></div><section class="acceptance" aria-labelledby="acceptance-title"><div><p>30-MINUTE CHECK</p><h3 id="acceptance-title">充值前完成一次基础验收</h3><p>以下测试使用最低充值金额即可完成。最好保存请求时间、模型名、错误码、用量和扣费截图，方便比较不同候选站。</p></div><ol><li><b>创建隔离密钥</b><span>为测试单独创建 Key，设置小额上限，只开放目标模型；不要直接使用生产密钥。</span></li><li><b>确认协议兼容</b><span>用官方 SDK 或常用客户端完成一次非流式和流式请求，检查 Base URL、模型名和错误格式。</span></li><li><b>验证核心能力</b><span>测试工具调用、JSON 输出、图片或文件输入，以及任务所需的最大上下文，不要只发送一句“你好”。</span></li><li><b>连续请求二十次</b><span>混合短请求与长请求，记录成功率、首字时间、完整耗时、429、5xx 和中途断流。</span></li><li><b>晚高峰再测一次</b><span>同一测试在不同时段复跑，观察线路拥塞和账号池切换是否造成明显波动。</span></li><li><b>复算一条账单</b><span>核对输入、输出、缓存、倍率和最终扣费；检查失败或取消的请求是否收费。</span></li><li><b>测试限额与停用</b><span>确认额度限制是否生效，模拟 Key 泄露后的禁用和更换流程，验证旧 Key 立即失效。</span></li><li><b>联系一次客服</b><span>询问具体模型版本、退款边界或故障处理，用答案的清晰度和可验证性判断售后质量。</span></li></ol></section><aside class="red-flags"><div><p>RED FLAGS</p><h3>看到这些信号，应暂停充值</h3></div><ul><li>价格远低于常见成本，却无法解释上游、倍率或计费方式</li><li>只展示余额变化，不提供请求级 Token 和扣费明细</li><li>模型名称含糊，账单模型与请求模型不一致</li><li>频繁更换域名、收款主体、客服账号或充值方式</li><li>强调大额赠送、长期包月和限时囤积，但退款规则模糊</li><li>故障时删除讨论、长期无公告，或把所有问题归因于用户网络</li></ul></aside><p class="data-note">榜单快照更新于 2026-08-02。公开指标用于初筛，缺失字段不会按零值计算；正式使用前请按上述流程独立验证。</p></div></section><section class="faq shell" id="faq"><div class="section-heading"><p>03 / DETAILED FAQ</p><h2>AI 中转站常见问题</h2></div><p class="faq-lead">这里集中回答接入、价格、缓存、模型真实性、隐私、充值和故障迁移问题。不同站点规则会变化，涉及费用和数据处理时，应以当期公开规则及实际账单为准。</p><div class="faq-list"><details><summary>什么是 AI API 中转站？</summary><p>中转站位于你的应用与模型厂商之间：你把请求发送给中转站，中转站完成鉴权、路由和计费，再将请求转发到模型厂商或其上游渠道。它通常能降低支付和接入门槛，并用一个 Key 提供多个模型，但也增加了第三方可用性、隐私和经营连续性风险。</p></details><details><summary>中转 API、官方 API 和 ChatGPT、Claude 订阅有什么区别？</summary><p>官方 API 按实际 Token 或请求量计费，适合程序调用；ChatGPT Plus、Claude Pro 等订阅主要面向网页或官方客户端，不等于可以无限调用 API；中转 API 则由第三方提供兼容接口和人民币结算。不要把订阅额度、API 额度和中转余额混为一谈。</p></details><details><summary>什么情况下更适合直接使用官方 API？</summary><p>涉及客户隐私、商业机密、受监管数据、长期生产服务或需要官方 SLA 时，应优先选择官方 API 或具备正式合同、数据处理协议和审计能力的企业服务。中转更适合个人学习、原型验证、非敏感自动化和能够随时切换供应商的任务。</p></details><details><summary>中转站的实际价格怎样计算？</summary><p>先确认充值换算，再看模型倍率、用户分组倍率、渠道倍率以及输入、输出、缓存读写的单独价格。简化公式是：实际人民币成本约等于官方美元单价乘 Token 用量，再乘各项倍率并除以充值兑换比例。只比较首页写的“几折”通常不够，应该用一条真实账单复算。</p></details><details><summary>为什么缓存命中率会显著影响成本？</summary><p>Claude Code、Codex 和长对话会反复携带大量上下文。缓存命中时，重复上下文通常比重新输入便宜；切换上游账号、模型或路由可能让缓存失效。测试中应分别查看缓存写入、缓存读取和普通输入用量，不能只看总 Token。</p></details><details><summary>怎样判断模型是否真实、能力是否完整？</summary><p>不要只看模型名称。应测试模型版本标识、上下文长度、流式输出、工具调用、结构化输出、图片或文件输入，并用固定题目比较输出特征。若高价模型长期表现异常、关键能力缺失或账单模型名与请求不一致，应暂停充值并向客服核对。</p></details><details><summary>在线率高、平均延迟低就代表稳定吗？</summary><p>不一定。平均值可能掩盖晚高峰抖动、长请求中断和少量极慢请求。更有价值的指标包括成功率、P95 延迟、首字时间、完整响应时间、连续请求失败率和错误码分布。至少在白天与晚高峰各做一轮真实任务测试。</p></details><details><summary>使用中转站时如何保护隐私？</summary><p>默认假设中转服务理论上能够接触请求内容。不要发送密码、私钥、身份证件、未脱敏客户数据或完整生产数据库；敏感字段应在本地脱敏。企业使用前还应确认日志保留期限、数据存储地区、删除机制、上游渠道和是否提供数据处理协议。</p></details><details><summary>API Key 怎样管理才更安全？</summary><p>为不同项目创建独立 Key，设置额度、模型和 IP 限制，不要把 Key 写进前端代码、公开仓库、截图或聊天记录。服务端使用环境变量或密钥管理系统保存，并定期轮换。发现异常调用后应立即禁用旧 Key，而不是只修改应用配置。</p></details><details><summary>第一次应该充值多少？</summary><p>只充值完成验收测试和短期使用所需的金额。先确认到账换算、账单明细、退款条件和余额有效期，再逐步增加。大额赠送、超低包月和限时囤积可能把线路、调价或停运风险转移给用户，不应因为折扣一次性存入长期预算。</p></details><details><summary>退款、发票和客服应该怎么核实？</summary><p>查看公开规则是否写明可退款范围、手续费、处理时限、发票主体和开票内容，并在充值前保存规则页面。客服响应速度要用真实问题验证，尤其要观察故障时是否主动公告、是否解释错误原因，以及余额异常能否提供可核对的处理记录。</p></details><details><summary>为什么不建议盲目使用超长上下文？</summary><p>上下文越长，输入成本、等待时间和缓存失效代价越高，也不保证模型能同等关注全部内容。应先通过检索、摘要、分段和删除无关历史减少输入；只有任务确实需要并且完成成本测试后，再启用 200K 或更长上下文。</p></details><details><summary>中转站突然不可用时怎么办？</summary><p>提前保存 Base URL、模型映射和余额记录，并让应用支持通过配置切换供应商。关键业务至少准备一个备用 Key，设置请求超时、有限重试和熔断，避免无限重试造成重复扣费。故障发生后先停用自动任务，再根据错误码判断是余额、限流、模型下线还是整站故障。</p></details><details><summary>AI 中转站排行榜的数据和排名如何理解？</summary><p>榜单依据公开资料和监测快照整理，并采用本站独立、固定的区间排序规则。缺失字段不会按零计算，排名也不能替代你的本地测试。它适合用于建立候选名单，不构成稳定性承诺、资金安全保证或购买建议。</p></details></div></section>
 </main>
 <footer><div class="shell"><a class="brand" href="./"><span class="logo">ZR</span><span><b>中转站排行</b><small>AI RELAY DIRECTORY</small></span></a><p>公开信息整理 · 不构成购买、充值或服务背书</p><a href="#main">返回顶部 ↑</a></div></footer>
 </body></html>

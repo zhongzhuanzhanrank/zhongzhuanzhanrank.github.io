@@ -610,11 +610,39 @@
       "@type": "Dataset",
       "@id": "https://zhongzhuanzhanrank.github.io/#dataset",
       "name": "AI 中转站排行榜数据",
-      "description": "收录 661 家 AI API 中转站的排名与公开服务信息。",
-      "dateModified": "2026-08-03",
+      "description": "本数据集整理 AI API 中转站的综合排名、名称、公开资料链接、成立日期、模型覆盖、在线率、平均延迟、用户评分、支付方式、退款与发票政策，用于帮助开发者比较候选服务。数据来自公开目录并定期更新，缺失字段保留为空；排行榜仅供信息检索和初步筛选，正式使用前应独立核验站点状态、计费规则与数据处理政策。 当前快照共收录 661 家站点。",
       "url": "https://zhongzhuanzhanrank.github.io/",
+      "dateModified": "2026-08-03",
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "license": "https://zhongzhuanzhanrank.github.io/dataset-license/",
+      "creator": {
+        "@type": "Organization",
+        "@id": "https://zhongzhuanzhanrank.github.io/#organization",
+        "name": "中转站排行",
+        "url": "https://zhongzhuanzhanrank.github.io/"
+      },
+      "publisher": {
+        "@id": "https://zhongzhuanzhanrank.github.io/#organization"
+      },
+      "keywords": [
+        "AI 中转站",
+        "API 中转站",
+        "大模型 API",
+        "在线率",
+        "平均延迟",
+        "模型覆盖",
+        "中转站排名"
+      ],
+      "includedInDataCatalog": {
+        "@type": "DataCatalog",
+        "name": "中转站排行",
+        "url": "https://zhongzhuanzhanrank.github.io/"
+      },
       "distribution": {
         "@type": "DataDownload",
+        "name": "AI 中转站排行榜 JSON 快照",
+        "description": "包含排行榜当前收录站点及其公开服务指标的 JSON 数据文件。",
         "encodingFormat": "application/json",
         "contentUrl": "https://zhongzhuanzhanrank.github.io/data.json"
       }

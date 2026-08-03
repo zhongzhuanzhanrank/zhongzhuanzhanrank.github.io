@@ -8,6 +8,8 @@ const DATA_PATH = path.join(ROOT, "data.json");
 const PAGE_ROOT = path.join(ROOT, "page");
 const SITEMAP_PATH = path.join(ROOT, "sitemap.xml");
 const ORIGIN = "https://zhongzhuanzhanrank.github.io";
+const DATASET_LICENSE_URL = `${ORIGIN}/dataset-license/`;
+const DATASET_DESCRIPTION = "本数据集整理 AI API 中转站的综合排名、名称、公开资料链接、成立日期、模型覆盖、在线率、平均延迟、用户评分、支付方式、退款与发票政策，用于帮助开发者比较候选服务。数据来自公开目录并定期更新，缺失字段保留为空；排行榜仅供信息检索和初步筛选，正式使用前应独立核验站点状态、计费规则与数据处理政策。";
 const PAGE_SIZE = 50;
 const SOURCE_URL = process.env.DATA_SOURCE_URL
   || "https://raw.githubusercontent.com/hvoyai/awesome-ai-api/main/data.json";
@@ -346,8 +348,18 @@ function structuredData({ page, canonical, title, description, sites, totalSites
   if (page === 1) {
     graph.push({
       "@type": "Dataset", "@id": `${ORIGIN}/#dataset`, name: "AI 中转站排行榜数据",
-      description: `收录 ${totalSites} 家 AI API 中转站的排名与公开服务信息。`, dateModified: updatedDate,
-      url: `${ORIGIN}/`, distribution: { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${ORIGIN}/data.json` },
+      description: `${DATASET_DESCRIPTION} 当前快照共收录 ${totalSites} 家站点。`,
+      url: `${ORIGIN}/`, dateModified: updatedDate, inLanguage: "zh-CN", isAccessibleForFree: true,
+      license: DATASET_LICENSE_URL,
+      creator: { "@type": "Organization", "@id": `${ORIGIN}/#organization`, name: "中转站排行", url: `${ORIGIN}/` },
+      publisher: { "@id": `${ORIGIN}/#organization` },
+      keywords: ["AI 中转站", "API 中转站", "大模型 API", "在线率", "平均延迟", "模型覆盖", "中转站排名"],
+      includedInDataCatalog: { "@type": "DataCatalog", name: "中转站排行", url: `${ORIGIN}/` },
+      distribution: {
+        "@type": "DataDownload", name: "AI 中转站排行榜 JSON 快照",
+        description: "包含排行榜当前收录站点及其公开服务指标的 JSON 数据文件。",
+        encodingFormat: "application/json", contentUrl: `${ORIGIN}/data.json`,
+      },
     });
     graph.push({
       "@type": "FAQPage", mainEntity: FAQ.map(([question, answer]) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })),
@@ -508,6 +520,7 @@ function renderSitemap(totalPages, updatedDate) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((url, index) => `  <url><loc>${url}</loc><lastmod>${updatedDate}</lastmod><changefreq>daily</changefreq><priority>${index === 0 ? "1.0" : index < totalPages ? "0.8" : "0.9"}</priority></url>`).join("\n")}
+  <url><loc>${DATASET_LICENSE_URL}</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
 </urlset>\n`;
 }
 
@@ -533,6 +546,18 @@ function verifyPages(pages, totalSites) {
       if (link[2] !== "nofollow noopener" || link[3] !== "origin") throw new Error(`第 ${page} 页外链策略错误`);
     }
   });
+}
+
+function verifyDatasetStructuredData(homeHtml) {
+  const jsonLd = JSON.parse(homeHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1] || "");
+  const dataset = jsonLd["@graph"]?.find((entry) => entry["@type"] === "Dataset");
+  if (!dataset) throw new Error("首页缺少 Dataset 结构化数据");
+  const descriptionLength = Array.from(String(dataset.description || "").trim()).length;
+  if (descriptionLength < 50 || descriptionLength > 5000) throw new Error(`Dataset description 长度无效：${descriptionLength}`);
+  if (dataset.license !== DATASET_LICENSE_URL) throw new Error("Dataset license 缺失或错误");
+  if (dataset.creator?.["@type"] !== "Organization" || !dataset.creator.name || !dataset.creator.url) {
+    throw new Error("Dataset creator 缺少完整 Organization 信息");
+  }
 }
 
 function verifyTopicPages(topicPages) {
@@ -578,6 +603,7 @@ async function main() {
     return { topic, matches, html: renderTopicPage({ topic, sites: matches.slice(0, PAGE_SIZE), allMatches: matches, updatedDate }) };
   });
   verifyPages(pages, sites.length);
+  verifyDatasetStructuredData(pages[0]);
   verifyTopicPages(topicPages);
   if (CHECK_ONLY) {
     process.stdout.write(`检查通过：${totalPages} 个榜单分页、${topicPages.length} 个关键词专题，${sites.length} 家站点\n`);

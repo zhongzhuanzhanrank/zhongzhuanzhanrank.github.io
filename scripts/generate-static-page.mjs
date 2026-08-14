@@ -542,7 +542,7 @@ function verifyPages(pages, totalSites) {
     if ((html.match(/<article class="station-card"/g) || []).length > PAGE_SIZE) throw new Error(`第 ${page} 页超过 ${PAGE_SIZE} 条`);
     if (!html.includes(`<link rel="canonical" href="${ORIGIN}${pagePath(page)}">`)) throw new Error(`第 ${page} 页 canonical 错误`);
     if (/rel="[^"]*noreferrer/.test(html)) throw new Error(`第 ${page} 页仍包含 noreferrer`);
-    for (const link of html.matchAll(/href="(https:\/\/www\.(?:hvoy\.ai|hvoyai\.com)\/sites\/[^"]+)"[^>]*rel="([^"]+)"[^>]*referrerpolicy="([^"]+)"/g)) {
+    for (const link of html.matchAll(/href="(https:\/\/(?:www\.)?(?:hvoy\.ai|hvoyai\.com)\/sites\/[^"]+)"[^>]*rel="([^"]+)"[^>]*referrerpolicy="([^"]+)"/g)) {
       if (link[2] !== "nofollow noopener" || link[3] !== "origin") throw new Error(`第 ${page} 页外链策略错误`);
     }
   });
@@ -574,7 +574,7 @@ function verifyTopicPages(topicPages) {
     if (/rel="[^"]*noreferrer/.test(html)) throw new Error(`${topic.label} 仍包含 noreferrer`);
     const cards = (html.match(/<article class="station-card"/g) || []).length;
     if (!cards || cards > PAGE_SIZE) throw new Error(`${topic.label} 候选站数量错误`);
-    const externalLinks = [...html.matchAll(/href="(https:\/\/www\.(?:hvoy\.ai|hvoyai\.com)\/sites\/[^"]+)"[^>]*rel="([^"]+)"[^>]*referrerpolicy="([^"]+)"/g)];
+    const externalLinks = [...html.matchAll(/href="(https:\/\/(?:www\.)?(?:hvoy\.ai|hvoyai\.com)\/sites\/[^"]+)"[^>]*rel="([^"]+)"[^>]*referrerpolicy="([^"]+)"/g)];
     if (externalLinks.length !== cards * 2) throw new Error(`${topic.label} HVOY 外链数量错误`);
     if (externalLinks.some((link) => link[2] !== "nofollow noopener" || link[3] !== "origin")) throw new Error(`${topic.label} 外链策略错误`);
     JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1] || "");

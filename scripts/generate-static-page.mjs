@@ -9,6 +9,17 @@ const PAGE_ROOT = path.join(ROOT, "page");
 const SITEMAP_PATH = path.join(ROOT, "sitemap.xml");
 const ORIGIN = "https://zhongzhuanzhanrank.github.io";
 const DATASET_LICENSE_URL = `${ORIGIN}/dataset-license/`;
+const BAIDU_TONGJI_SCRIPT = [
+  "<script>",
+  "var _hmt = _hmt || [];",
+  "(function() {",
+  "  var hm = document.createElement(\"script\");",
+  "  hm.src = \"https://hm.baidu.com/hm.js?82edc36e0cd00eafe6092d892d2d5f71\";",
+  "  var s = document.getElementsByTagName(\"script\")[0];",
+  "  s.parentNode.insertBefore(hm, s);",
+  "})();",
+  "</script>",
+].join("\n");
 const DATASET_DESCRIPTION = "本数据集整理 AI API 中转站的综合排名、名称、公开资料链接、成立日期、模型覆盖、在线率、平均延迟、用户评分、支付方式、退款与发票政策，用于帮助开发者比较候选服务。数据来自公开目录并定期更新，缺失字段保留为空；排行榜仅供信息检索和初步筛选，正式使用前应独立核验站点状态、计费规则与数据处理政策。";
 const PAGE_SIZE = 50;
 const SOURCE_URL = process.env.DATA_SOURCE_URL
@@ -446,6 +457,7 @@ function renderTopicPage({ topic, sites, allMatches, updatedDate }) {
   <meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:image" content="${ORIGIN}/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(topic.label)}推荐与对比">
   <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(description)}"><meta name="twitter:image" content="${ORIGIN}/og-image.png">
   <script type="application/ld+json">${jsonLd}</script>
+  ${BAIDU_TONGJI_SCRIPT}
 </head>
 <body>
 <a class="skip-link" href="#main">跳到主要内容</a>
@@ -496,6 +508,7 @@ function renderPage({ page, totalPages, sites, allSites, updatedDate }) {
   <meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:image" content="${ORIGIN}/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="AI 中转站排行榜">
   <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(description)}"><meta name="twitter:image" content="${ORIGIN}/og-image.png">
   <script type="application/ld+json">${jsonLd}</script>
+  ${BAIDU_TONGJI_SCRIPT}
 </head>
 <body>
 <a class="skip-link" href="#main">跳到主要内容</a>

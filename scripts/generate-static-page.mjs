@@ -42,7 +42,7 @@ const FAQ = [
   ["退款、发票和客服应该怎么核实？", "查看公开规则是否写明可退款范围、手续费、处理时限、发票主体和开票内容，并在充值前保存规则页面。客服响应速度要用真实问题验证，尤其要观察故障时是否主动公告、是否解释错误原因，以及余额异常能否提供可核对的处理记录。"],
   ["为什么不建议盲目使用超长上下文？", "上下文越长，输入成本、等待时间和缓存失效代价越高，也不保证模型能同等关注全部内容。应先通过检索、摘要、分段和删除无关历史减少输入；只有任务确实需要并且完成成本测试后，再启用 200K 或更长上下文。"],
   ["中转站突然不可用时怎么办？", "提前保存 Base URL、模型映射和余额记录，并让应用支持通过配置切换供应商。关键业务至少准备一个备用 Key，设置请求超时、有限重试和熔断，避免无限重试造成重复扣费。故障发生后先停用自动任务，再根据错误码判断是余额、限流、模型下线还是整站故障。"],
-  ["AI 中转站排行榜的数据和排名如何理解？", "榜单顺序与公开目录 data.json 的排名一致。缺失字段不会按零计算，排名也不能替代你的本地测试。它适合用于建立候选名单，不构成稳定性承诺、资金安全保证或购买建议。"],
+  ["AI 中转站排行榜的数据和排名如何理解？", "榜单以公开目录 data.json 的排名为基准，并在每 8 名一组内按日期轮转。缺失字段不会按零计算，排名也不能替代你的本地测试。它适合用于建立候选名单，不构成稳定性承诺、资金安全保证或购买建议。"],
 ];
 
 const TOPICS = [
@@ -168,6 +168,31 @@ function normalize(site, index) {
     supportsRefund: boolean(site.supportsRefund),
     supportsInvoice: boolean(site.supportsInvoice),
   };
+}
+
+const RANK_BAND_SIZE = 8;
+
+function shanghaiDate(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+}
+
+function rotateRankBands(sites, dayText) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dayText || ""));
+  const dayNumber = match
+    ? Math.floor(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])) / 86_400_000)
+    : 0;
+  const rotated = [];
+  for (let start = 0; start < sites.length; start += RANK_BAND_SIZE) {
+    const band = sites.slice(start, start + RANK_BAND_SIZE);
+    const shift = dayNumber % band.length;
+    rotated.push(...band.slice(shift), ...band.slice(0, shift));
+  }
+  return rotated.map((site, index) => ({ ...site, rank: index + 1 }));
 }
 
 function validate(data) {
@@ -581,8 +606,11 @@ async function main() {
   if (SHOULD_SYNC) await sync();
   const data = JSON.parse(await readFile(DATA_PATH, "utf8"));
   validate(data);
-  const sites = data.sites.map(normalize).sort((a, b) => a.rank - b.rank);
-  const updatedDate = date(data.updatedDate) || String(data.generatedAt || "").slice(0, 10) || new Date().toISOString().slice(0, 10);
+  const updatedDate = date(data.updatedDate) || String(data.generatedAt || "").slice(0, 10) || shanghaiDate();
+  const sites = rotateRankBands(
+    data.sites.map(normalize).sort((a, b) => a.rank - b.rank),
+    shanghaiDate(),
+  );
   const totalPages = Math.ceil(sites.length / PAGE_SIZE);
   const pages = Array.from({ length: totalPages }, (_, index) => {
     const page = index + 1;
